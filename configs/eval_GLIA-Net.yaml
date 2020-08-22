@@ -1,0 +1,91 @@
+task: AneurysmSeg
+logging_folder: logs
+ckpt_folder: ckpt
+summary_folder: summary
+load_best_model: False  # if false, load last. else load best checkpoint
+ckpt_file: checkpoint-0245700.pt  # ckpt file name to load. set null to load the latest ckpt
+log_every_n_iters: 10  # every n iters log to logger
+
+# will be sent to model as kwargs
+model:
+  filename: GLIA-Net
+  classname: GLIANet
+  with_global: True  # whether use global positioning network
+  global_type: attention_map
+  global_out_channels: 2
+  in_channels: 3
+  out_channels: 2
+  num_classes: 2  # usually same to out_channels
+  f_maps: [16, 32, 64, 128]
+  norm_type: gn   # bn (batch norm), in (instance norm), gn (group norm) or sn (switchable norm)
+
+data:
+  features:
+    cta_img_file: image
+  labels:
+    aneurysm_seg_file: mask
+  hu_values: [[0, 100], [100, 200], [200, 800]]  # HU value intervals  for input images. Length should be same as in_channels
+  data_root:  # path to the dataset and can be different for windows and linux
+    windows: medical_data\
+    linux: medical_data/
+  instance_list_file: aneurysm_seg.csv   # data information list
+  eval_num_file: 0  # how many files used in each eval phase. 0 to use one whole eval epoch
+  eval_pos_neg_ratio: [1, 1]  # ratio for positive and negative patches during eval
+  img_spacing: null  # set null if you don't want to change spacing. e.g. [0.5, 0.5, 0.5]
+  patch_size: [96, 96, 96]  # depth, width, height
+  overlap_step: [48, 48, 48]  # only in sliding window data generating method
+  num_io_workers: 1  # number of data_loading workers/processes
+  num_proc_workers: 0  # number of data pre-processing workers/processes. set 0 to disable multi-processing (which is a must on Windows).
+
+
+train:
+  manual_seed: 12345  # random seed to reproduce results
+  batch_size: 2  # for each device/gpu
+  log_summary_every_n_iters: 20  # log to summary folder
+  losses: # first loss is the main loss. this dict will be sent to LossWrapper as kwargs
+    - name: ExpLoss  # local segmentation loss
+      loss_weight: 1.0
+      final_activation: softmax
+      weight:
+        type: pyramid  # class, sample, pyramid, or null
+        pyramid_size_threshold: 400  # targets more than this number of positive voxels won't use pyramid
+        pyramid_weight_interval: [3.0, 20.0]
+        pyramid_ignored_index: 0
+        pyramid_ignored_index_weight: 1.0
+      omg_dice: 0.8
+      omg_cross: 0.2
+      gamma_dice: 0.3
+      gamma_cross: 0.3
+      ignored_index: null  # if set, ignore that target index in the loss
+      reduction: mean  # null, mean or sum
+    - name: SoftmaxCrossEntropyLoss  # global positioning loss
+      loss_weight: 0.1
+      final_activation: softmax
+      weight:
+        type: null  # class, sample, pyramid, or null
+      reduction: mean
+
+
+# note that eval phase metrics in training is patch-wise with overlap among patches, not case-wise
+eval:
+  phase: test  # phase tag in summary folder to identify different test runs
+  # supported metrics: ap, auc, precision, recall, sensitivity, specificity, dsc, hd95, tp, fp, fn, tn.
+  # metrics are per voxel by default. add prefix per_target_ to compute per target metrics
+  # the first is the main eval metric
+  metrics: [ap, auc, precision, recall, dsc, hd95, per_target_precision, per_target_recall]
+  # curves will be logged to tensorboard after each epoch
+  # supported curves: pr (precision-recall curve), roc (ROC curve)
+  # metrics are per voxel by default. add prefix per_target_ to compute per target metrics
+  curves: [pr, roc]
+  save_metrics_to_file: eval_metrics.csv  # if set, save metric results to this file
+  num_thresholds: 200  # for computing AUC and AP
+  thresholds_type: uline  # logspace, linspace, logspace_pro or uline. see in get_evaluation_metric()
+  eval_score_higher_is_better: True  # just for the first metrics
+  probability_threshold: 0.5  # for precision, recall...
+
+
+visualization:
+  # visualization format in tensorboard
+  name: GridTensorboardFormatter
+  num_slices_per_cube: 9  # how many 2d image slices to represent a 3d image patch
+  center_depth_step: 1  # slice interval among 2d slices to view a positive target

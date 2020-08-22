@@ -1,0 +1,19 @@
+# for per-case evaluation on probability map predictions
+eval_prob:
+  # supported metrics: ap, auc, precision, recall, sensitivity, specificity, dsc, hd95, tp, fp, fn, tn.
+  # metrics are per voxel by default. add prefix per_target_ to compute per target metrics
+  # the first is the main eval metric
+  metrics: [dsc, hd95, per_target_precision, per_target_recall, per_target_ap, per_target_auc]
+  num_thresholds: 200  # for computing AUC and AP
+  thresholds_type: uline  # logspace, linspace, logspace_pro or uline. see in get_evaluation_metric()
+  probability_threshold: 0.5  # for precision, recall...
+  save_metrics_to_file: eval_metrics.csv  # save the results to this file
+
+#  for per-case evaluation on label mask predictions
+eval_mask:
+  # supported metrics: ap, auc, precision, recall, sensitivity, specificity, dsc, hd95, tp, fp, fn, tn.
+  # metrics are per voxel by default. add prefix per_target_ to compute per target metrics
+  # the first is the main eval metric
+  metrics: [per_target_precision, per_target_recall, per_target_tp, per_target_fp, per_target_fn]
+#  probability_threshold: 0.5  # for precision, recall...
+  save_metrics_to_file: eval_metrics.csv  # save the results to this file

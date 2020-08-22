@@ -1,0 +1,10 @@
+subset,id,hospital,cta_img_file,aneurysm_seg_file
+train,P001,hos_1,cta_img/P001.nii.gz,ane_seg/P001.nii.gz
+train,P002,hos_1,cta_img/P002.nii.gz,ane_seg/P002.nii.gz
+train,P003,hos_2,cta_img/P003.nii.gz,ane_seg/P003.nii.gz
+train,P004,hos_2,cta_img/P004.nii.gz,ane_seg/P004.nii.gz
+train,P005,hos_3,cta_img/P005.nii.gz,ane_seg/P005.nii.gz
+train,P006,hos_3,cta_img/P006.nii.gz,ane_seg/P006.nii.gz
+eval,P101,hos_1,cta_img/P101.nii.gz,ane_seg/P101.nii.gz
+eval,P102,hos_2,cta_img/P102.nii.gz,ane_seg/P102.nii.gz
+eval,P103,hos_3,cta_img/P103.nii.gz,ane_seg/P103.nii.gz
