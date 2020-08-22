@@ -36,6 +36,9 @@ python train.py -c GLIA-Net
 ```
 The logs, checkpoints, summaries and other running assets will be saved to `exp/`.
 
+Or you can download a pretrained model - [checkpoint-0245700.pt](https://github.com/MeteorsHub/GLIA-Net/releases/download/v1.0/checkpoint-0245700.pt).
+Then put it to `exp/GLIA-Net/1/ckpt`.
+
 ## Evaluation
 Prepare an evaluation configuration file like `configs/eval_GLIA-Net.yaml`, 
 which should have a filename prefix of 'eval_'.
