@@ -222,7 +222,10 @@ class _ModelCore:
                 self.num_epoch = state['num_epoch']
             self.num_iterations = state['num_iteration'] + 1
             if 'best_eval_score' in state:
-                self.best_eval_score = state['best_eval_score']
+                if isinstance(state['best_eval_score'], torch.Tensor):
+                    self.best_eval_score = state['best_eval_score'].item()
+                else:
+                    self.best_eval_score = state['best_eval_score']
         else:
             self.logger.warning('No checkpoint exists. Starting from scratch...')
 
@@ -626,7 +629,7 @@ class Trainer(_ModelCore):
             is_best = eval_score < self.best_eval_score
         if is_best:
             self.logger.info(f'Got new best evaluation score: {eval_score}')
-            self.best_eval_score = eval_score
+            self.best_eval_score = eval_score.item()
         return is_best
 
 
