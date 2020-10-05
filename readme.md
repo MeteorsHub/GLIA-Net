@@ -2,6 +2,7 @@
 
 This is the official repository of GLIA-Net, a segmentation network for 
 intracranial aneurysm on CTA images using pytorch. 
+If you find it useful in your research, please cite our paper when avaiable (under review now).
 
 ![Network structure](artworks/workflow.png)
 
@@ -44,7 +45,7 @@ Prepare an evaluation configuration file like `configs/eval_GLIA-Net.yaml`,
 which should have a filename prefix of 'eval_'.
 Then run
 ```
-python evaluation.py -c eval_GLIA-Net
+python evaluate.py -c eval_GLIA-Net
 ```
 Not that this is an evaluation on patches, which depends on how to generate all patches.
 If you want to evaluate on whole cases, run the inference code to generate predictions and then
