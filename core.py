@@ -470,7 +470,7 @@ class Trainer(_ModelCore):
 
             # update avg_losses
             if avg_losses is None:
-                avg_losses = OrderedDict(zip(list(losses.keys()), [RunningAverage()] * len(losses)))
+                avg_losses = OrderedDict(zip(list(losses.keys()), [RunningAverage() for _ in range(len(losses))]))
             for loss_key, loss_value in losses.items():
                 avg_losses[loss_key].update(loss_value.item(), self.batch_size)
 
@@ -567,7 +567,7 @@ class Trainer(_ModelCore):
                 main_target = list(targets.values())[0]
 
                 if eval_avg_losses is None:
-                    eval_avg_losses = OrderedDict(zip(list(losses.keys()), [RunningAverage()] * len(losses)))
+                    eval_avg_losses = OrderedDict(zip(list(losses.keys()), [RunningAverage() for _ in range(len(losses))]))
                 for loss_key, loss_value in losses.items():
                     eval_avg_losses[loss_key].update(loss_value.item(), self.batch_size)
 
