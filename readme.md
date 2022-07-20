@@ -3,6 +3,7 @@
 This is the official repository of GLIA-Net, a segmentation network for
 intracranial aneurysm on CTA images using pytorch.
 If you find it useful in your research, please cite our paper: https://doi.org/10.1016/j.patter.2020.100197
+The Large IA Segmentation dataset released in the paper was moved to Zenodo: https://doi.org/10.5281/zenodo.6801398.
 
 ![Network structure](artworks/workflow.png)
 
